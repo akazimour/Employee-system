@@ -1,5 +1,6 @@
 package com.akazimour.Employeesystem.service;
 
+import com.akazimour.Employeesystem.exception.ResourceNotFoundException;
 import com.akazimour.Employeesystem.model.Employee;
 import com.akazimour.Employeesystem.repository.EmployeeRepository;
 import org.assertj.core.api.Assertions;
@@ -13,7 +14,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 public class EmployeeServiceTest {
@@ -45,5 +49,18 @@ public class EmployeeServiceTest {
         Assertions.assertThat(employee1).isNotNull();
         Assertions.assertThat(employee1.getId()).isGreaterThan(0);
       }
+
+    // JUnit test for employeeService saveEmployee method with exception
+    @DisplayName("JUnit test for employeeService saveEmployee method with exception")
+    @Test
+    public void givenEmployee_WhenSavedViaService_thenReturnException(){
+        // given
+        given(employeeRepository.findByEmail(employee.getEmail())).willReturn(Optional.of(employee));
+        // when
+        org.junit.jupiter.api.Assertions.assertThrows(ResourceNotFoundException.class, ()->{employeeServiceImpl.saveEmployee(employee);});
+        // then
+        verify(employeeRepository,never()).save(any(Employee.class));
+    }
+
 
 }
