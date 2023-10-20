@@ -92,13 +92,35 @@ public class EmployeeRepositoryTest {
                 .isEqualTo(employee);
     }
 
-    //JUnit test for
+    //JUnit test for get employee by email
+    @DisplayName("JUnit test for get employee by email")
+    @Test
+    public void givenEmployee_WhenFindByEmail_thenReturn(){
+        //given
+        Employee employee3 = Employee.builder()
+                .firstName("Jack")
+                .lastName("Sparrow")
+                .email("jack@gmail.com")
+                .build();
+        Employee savedEmployee = employeeRepository.save(employee3);
+
+        //when
+        Employee employee = employeeRepository.findByEmail(employee3.getEmail()).get();
+
+        //then
+        assertThat(employee).isNotNull();
+        assertThat(savedEmployee)
+                .usingRecursiveComparison()
+                .isEqualTo(employee);
+    }
+
+   // JUnit test for
 //    @Test
 //    public void given_When_then(){
-//        //given
-//
-//        //when
-//
-//        //then
-//    }
+        //given
+
+        //when
+
+        //then
+  //  }
 }
