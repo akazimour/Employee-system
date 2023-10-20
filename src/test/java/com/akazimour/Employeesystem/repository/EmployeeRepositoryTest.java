@@ -114,6 +114,30 @@ public class EmployeeRepositoryTest {
                 .isEqualTo(employee);
     }
 
+    // JUnit test for update employee object
+    @DisplayName("JUnit test for update employee object")
+    @Test
+    public void givenEployee_WhenUpdated_thenReturnWithUpdatedEmp(){
+    //given
+        Employee employee4 = Employee.builder()
+                .firstName("Sonja")
+                .lastName("Blade")
+                .email("sonja@gmail.com")
+                .build();
+        Employee savedEmployee = employeeRepository.save(employee4);
+
+    // when
+        Employee employee = employeeRepository.findById(employee4.getId()).get();
+        employee.setFirstName("Tania");
+        employee.setEmail("tanja@gmail.com");
+        Employee savedEmp = employeeRepository.saveAndFlush(employee);
+
+    // then
+        assertThat(savedEmp).isNotNull();
+        assertThat(savedEmp.getEmail()).isEqualTo("tanja@gmail.com");
+        assertThat(savedEmp.getFirstName()).isEqualTo("Tania");
+      }
+
    // JUnit test for
 //    @Test
 //    public void given_When_then(){
