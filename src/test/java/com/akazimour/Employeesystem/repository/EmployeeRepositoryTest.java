@@ -2,6 +2,8 @@ package com.akazimour.Employeesystem.repository;
 
 import com.akazimour.Employeesystem.model.Employee;
 import static org.assertj.core.api.Assertions.assertThat;
+
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,22 +11,34 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @DataJpaTest
 public class EmployeeRepositoryTest {
     @Autowired
     EmployeeRepository employeeRepository;
 
+    private Employee employee;
+
+    @BeforeEach
+    public void setUp(){
+        employee = Employee.builder()
+                .firstName("John")
+                .lastName("Doe")
+                .email("johndoe@gmail.com")
+                .build();
+    }
+
     //JUnit test for save employee operation testing
     @DisplayName("JUnit test for save employee operation testing")
     @Test
     public void givenEmployeeObject_whenSave_thenReturnSavedEmployee(){
         //given
-        Employee employee = Employee.builder()
-                .firstName("John")
-                .lastName("Doe")
-                .email("johndoe@gmail.com")
-                .build();
+//        Employee employee = Employee.builder()
+//                .firstName("John")
+//                .lastName("Doe")
+//                .email("johndoe@gmail.com")
+//                .build();
         //when
         Employee savedEmployee = employeeRepository.save(employee);
 
@@ -39,11 +53,11 @@ public class EmployeeRepositoryTest {
     @Test
     public void givenEmployeeList_WhenSaved_thenReturn(){
         //given
-        Employee employee = Employee.builder()
-                .firstName("John")
-                .lastName("Doe")
-                .email("johndoe@gmail.com")
-                .build();
+//        Employee employee = Employee.builder()
+//                .firstName("John")
+//                .lastName("Doe")
+//                .email("johndoe@gmail.com")
+//                .build();
 
         Employee employee1 = Employee.builder()
                 .firstName("Johny")
@@ -75,12 +89,12 @@ public class EmployeeRepositoryTest {
     public void givenEmployee_WhenFindById_thenReturnWithEmployee(){
         //given
 
-        Employee employee = Employee.builder()
-                .firstName("John")
-                .lastName("Doe")
-                .email("johndoe@gmail.com")
-                .build();
-        Employee savedEmployee = employeeRepository.save(employee);
+//        Employee employee = Employee.builder()
+//                .firstName("John")
+//                .lastName("Doe")
+//                .email("johndoe@gmail.com")
+//                .build();
+       Employee savedEmployee = employeeRepository.save(employee);
 
         //when
         Employee employeeWithId = employeeRepository.findById(employee.getId()).get();
@@ -136,6 +150,34 @@ public class EmployeeRepositoryTest {
         assertThat(savedEmp).isNotNull();
         assertThat(savedEmp.getEmail()).isEqualTo("tanja@gmail.com");
         assertThat(savedEmp.getFirstName()).isEqualTo("Tania");
+      }
+
+    // JUnit test for JPQL query
+    @DisplayName("JUnit test for JPQL query")
+    @Test
+    public void givenEmployee_WhenJPQLisUsed_thenReturnEmployee(){
+    //given
+        Employee employee4 = Employee.builder()
+                .firstName("Sonja")
+                .lastName("Blade")
+                .email("sonja@gmail.com")
+                .build();
+        Employee savedEmployee = employeeRepository.save(employee4);
+
+        Employee employee3 = Employee.builder()
+                .firstName("Jack")
+                .lastName("Sparrow")
+                .email("jack@gmail.com")
+                .build();
+        Employee emp = employeeRepository.save(employee3);
+
+    //when
+        Employee employee = employeeRepository.findByQuery(savedEmployee.getFirstName(), savedEmployee.getLastName()).get();
+
+    //then
+        assertThat(employee)
+                .usingRecursiveComparison()
+                .isEqualTo(savedEmployee);
       }
 
    // JUnit test for
