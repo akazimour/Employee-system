@@ -103,6 +103,18 @@ given(employeeRepository.findAll()).willReturn(List.of(employee,employee1));
         Assertions.assertThat(allEmployees).size().isEqualTo(0);
 
     }
+    // JUnit test for findById service method
+    @DisplayName("JUnit test for findById service method")
+    @Test
+        public void givenEmployee_WhenCalledById_thenReturn(){
+        //given
+        given(employeeRepository.findById(employee.getId())).willReturn(Optional.of(employee));
+        //when
+        Employee employee1 = employeeServiceImpl.getEmployeeById(employee.getId()).get();
+        //then
+        Assertions.assertThat(employee1).isNotNull();
+        Assertions.assertThat(employee1).usingRecursiveComparison().isEqualTo(employee);
+      }
 
 
 }
