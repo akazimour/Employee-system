@@ -12,6 +12,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -82,6 +83,26 @@ given(employeeRepository.findAll()).willReturn(List.of(employee,employee1));
         Assertions.assertThat(allEmployees).size().isEqualTo(2);
         Assertions.assertThat(allEmployees).contains(employee,employee1);
       }
+
+    // JUnit test for returnAll employees negative case
+    @DisplayName("JUnit test for returnAll employees negative case")
+    @Test
+    public void givenEmptyEmployeeList_WhenRunQuery_thenReturnEmptyList(){
+        // given
+        Employee employee1 = Employee.builder()
+                .id(2L)
+                .firstName("Tim")
+                .lastName("Burton")
+                .email("tim@gmail.com")
+                .build();
+        given(employeeRepository.findAll()).willReturn(Collections.emptyList());
+        // when
+        List<Employee> allEmployees = employeeServiceImpl.getAllEmployees();
+        // then
+        Assertions.assertThat(allEmployees).isEmpty();
+        Assertions.assertThat(allEmployees).size().isEqualTo(0);
+
+    }
 
 
 }
