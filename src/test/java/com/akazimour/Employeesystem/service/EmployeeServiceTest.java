@@ -12,6 +12,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -61,6 +62,26 @@ public class EmployeeServiceTest {
         // then
         verify(employeeRepository,never()).save(any(Employee.class));
     }
+
+    // JUnit test for returnAll employees
+    @DisplayName("JUnit test for returnAll employees")
+    @Test
+    public void givenEmployees_WhenRunQuery_thenReturnAll(){
+   // given
+       Employee employee1 = Employee.builder()
+                .id(2L)
+                .firstName("Tim")
+                .lastName("Burton")
+                .email("tim@gmail.com")
+                .build();
+given(employeeRepository.findAll()).willReturn(List.of(employee,employee1));
+        // when
+        List<Employee> allEmployees = employeeServiceImpl.getAllEmployees();
+        // then
+        Assertions.assertThat(allEmployees).isNotNull();
+        Assertions.assertThat(allEmployees).size().isEqualTo(2);
+        Assertions.assertThat(allEmployees).contains(employee,employee1);
+      }
 
 
 }
