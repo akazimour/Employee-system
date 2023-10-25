@@ -115,6 +115,27 @@ given(employeeRepository.findAll()).willReturn(List.of(employee,employee1));
         Assertions.assertThat(employee1).isNotNull();
         Assertions.assertThat(employee1).usingRecursiveComparison().isEqualTo(employee);
       }
-
+    // JUnit test for updateEmployee service method
+    @DisplayName("JUnit test for updateEmployee service method")
+    @Test
+    public void givenEmployee_WhenUpdated_thenReturnWithUpdatedEmployee(){
+   // given
+        Employee employee1 = Employee.builder()
+                .id(2L)
+                .firstName("Tim")
+                .lastName("Burton")
+                .email("tim@gmail.com")
+                .build();
+        given(employeeRepository.findById(employee1.getId())).willReturn(Optional.of(employee1));
+        given(employeeRepository.save(employee1)).willReturn(employee1);
+        employee1.setEmail("burton@gmail.com");
+        employee1.setFirstName("Tom");
+   // when
+        Employee updated = employeeServiceImpl.updateEmployee(employee1.getId(), employee1);
+    // then
+        Assertions.assertThat(updated.getEmail()).isEqualTo("burton@gmail.com");
+        Assertions.assertThat(updated.getFirstName()).isEqualTo("Tom");
+        Assertions.assertThat(updated.getId()).isEqualTo(2L);
+      }
 
 }

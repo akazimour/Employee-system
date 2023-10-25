@@ -3,6 +3,7 @@ package com.akazimour.Employeesystem.service;
 import com.akazimour.Employeesystem.exception.ResourceNotFoundException;
 import com.akazimour.Employeesystem.model.Employee;
 import com.akazimour.Employeesystem.repository.EmployeeRepository;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,4 +31,13 @@ public class EmployeeServiceImpl implements EmployeeService{
     public Optional<Employee> getEmployeeById(long id) {
        return employeeRepository.findById(id);
     }
+
+    @Override
+    public Employee updateEmployee(long id, Employee employee) {
+        Employee employee1 = employeeRepository.findById(id).get();
+        BeanUtils.copyProperties(employee,employee1);
+       return employeeRepository.save(employee1);
+
+    }
+
 }
