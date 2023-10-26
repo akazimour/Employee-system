@@ -127,13 +127,13 @@ given(employeeRepository.findAll()).willReturn(List.of(employee,employee1));
                 .lastName("Burton")
                 .email("tim@gmail.com")
                 .build();
-        given(employeeRepository.findById(employee1.getId())).willReturn(Optional.of(employee1));
+      //  given(employeeRepository.findById(employee1.getId())).willReturn(Optional.of(employee1));
         given(employeeRepository.save(employee1)).willReturn(employee1);
         employee1.setEmail("burton@gmail.com");
         employee1.setFirstName("Tom");
 
    // when
-        Employee updated = employeeServiceImpl.updateEmployee(employee1.getId(), employee1);
+        Employee updated = employeeServiceImpl.updateEmployee(employee1);
     // then
         Assertions.assertThat(updated.getEmail()).isEqualTo("burton@gmail.com");
         Assertions.assertThat(updated.getFirstName()).isEqualTo("Tom");
@@ -159,5 +159,6 @@ given(employeeRepository.findAll()).willReturn(List.of(employee,employee1));
         verify(employeeRepository,times(1)).deleteById(employeeId);
 
       }
+
 
 }
