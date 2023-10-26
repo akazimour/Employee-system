@@ -12,14 +12,15 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
+import static org.mockito.BDDMockito.willDoNothing;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class EmployeeServiceTest {
@@ -130,12 +131,33 @@ given(employeeRepository.findAll()).willReturn(List.of(employee,employee1));
         given(employeeRepository.save(employee1)).willReturn(employee1);
         employee1.setEmail("burton@gmail.com");
         employee1.setFirstName("Tom");
+
    // when
         Employee updated = employeeServiceImpl.updateEmployee(employee1.getId(), employee1);
     // then
         Assertions.assertThat(updated.getEmail()).isEqualTo("burton@gmail.com");
         Assertions.assertThat(updated.getFirstName()).isEqualTo("Tom");
         Assertions.assertThat(updated.getId()).isEqualTo(2L);
+      }
+
+    // JUnit test for delete byId service method
+    @DisplayName("JUnit test for delete byId service method")
+    @Test
+    public void givenEmployee_WhenDelete_thenEmployeeDeleted(){
+   // given
+        long employeeId=2L;
+        Employee employee1 = Employee.builder()
+                .id(2L)
+                .firstName("Tim")
+                .lastName("Burton")
+                .email("tim@gmail.com")
+                .build();
+        willDoNothing().given(employeeRepository).deleteById(employeeId);
+   // when
+        employeeServiceImpl.deleteEmployee(employeeId);
+   // then
+        verify(employeeRepository,times(1)).deleteById(employeeId);
+
       }
 
 }
