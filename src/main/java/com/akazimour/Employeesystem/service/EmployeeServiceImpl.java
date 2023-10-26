@@ -5,6 +5,7 @@ import com.akazimour.Employeesystem.model.Employee;
 import com.akazimour.Employeesystem.repository.EmployeeRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -34,8 +35,10 @@ public class EmployeeServiceImpl implements EmployeeService{
 
     @Override
     public Employee updateEmployee(long id, Employee employee) {
-        Employee employee1 = employeeRepository.findById(id).get();
-        BeanUtils.copyProperties(employee,employee1);
+        Employee employee1 = employeeRepository.findById(id).orElseThrow(()->new ResourceNotFoundException("Employee does not exist with this id: "+id));
+       employee1.setFirstName(employee.getFirstName());
+       employee1.setLastName(employee.getLastName());
+       employee1.setEmail(employee.getEmail());
        return employeeRepository.save(employee1);
 
     }
