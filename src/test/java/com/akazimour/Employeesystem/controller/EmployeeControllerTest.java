@@ -154,6 +154,45 @@ BDDMockito.given(employeeService.updateEmployee(ArgumentMatchers.any(Employee.cl
                 .andExpect(MockMvcResultMatchers.jsonPath("$.lastName",CoreMatchers.is(updatedEmployee.getLastName())))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.email",CoreMatchers.is(updatedEmployee.getEmail())));
       }
+    // JUnit test for updateEmployee REST API negative case
+    @Test
+    public void givenEmployee_WhenUpdated_thenReturnWithEmptyObject() throws Exception {
+        //given
+        long empId = 1L;
+        Employee savedEmployee = Employee.builder()
+                .firstName("John")
+                .lastName("Doe")
+                .email("johndoe@gmail.com")
+                .build();
+
+        Employee updatedEmployee = Employee.builder()
+                .firstName("Arnold")
+                .lastName("Schwarzenegger")
+                .email("arnold@gmail.com")
+                .build();
+        BDDMockito.given(employeeService.getEmployeeById(empId)).willReturn(Optional.empty());
+        BDDMockito.given(employeeService.updateEmployee(ArgumentMatchers.any(Employee.class))).willAnswer((invocation)->invocation.getArgument(0));
+        //when
+        ResultActions response = mockMvc.perform(MockMvcRequestBuilders.put("/api/employees/{id}", empId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(updatedEmployee)));
+        //then
+        response.andExpect(MockMvcResultMatchers.status().isNotFound())
+                .andDo(MockMvcResultHandlers.print());
+    }
+
+    // JUnit test for EmployeeController delete employee REST API
+    @Test
+   public void given_When_then() throws Exception {
+    //given
+        long empId = 1L;
+        BDDMockito.willDoNothing().given(employeeService).deleteEmployee(empId);
+    //when
+        ResultActions response = mockMvc.perform(MockMvcRequestBuilders.delete("/api/employees/{id}",empId));
+        //then
+        response.andExpect(MockMvcResultMatchers.status().isOk()).andDo(MockMvcResultHandlers.print());
+
+      }
 
 
 }

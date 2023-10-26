@@ -6,6 +6,7 @@ import com.akazimour.Employeesystem.service.EmployeeServiceImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
@@ -46,9 +47,12 @@ public class EmployeeController {
             employeeService.updateEmployee(employee1);
             return new ResponseEntity<Employee>(employee1,HttpStatus.OK);
         }else
-            throw new ResourceNotFoundException("Employee Does not exist with id: "+id);
-
-
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+    }
+@DeleteMapping("/{id}")
+    public ResponseEntity<String>deleteById(@PathVariable long id){
+        employeeService.deleteEmployee(id);
+        return new ResponseEntity<String>("Employee was deleted successfully!",HttpStatus.OK);
     }
 
 }
