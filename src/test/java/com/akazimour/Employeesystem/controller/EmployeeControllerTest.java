@@ -12,15 +12,20 @@ import org.mockito.BDDMockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @WebMvcTest
 public class EmployeeControllerTest {
@@ -77,11 +82,49 @@ public void givenEmployee_WhenSaved_return_Employee() throws Exception{
     //when
         ResultActions response = mockMvc.perform(MockMvcRequestBuilders.get("/api/employees"));
 
-        //then
+    //then
         response.andExpect(MockMvcResultMatchers.status().isOk())
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.size()",CoreMatchers.is(employeeList.size())));
       }
+
+    // JUnit test for EmployeeController find by id REST API positive
+    @Test
+    public void givenEmployee_WhenCallById_thenReturnWitEmployee() throws Exception {
+    //given
+        long empId = 1L;
+        Employee employee = Employee.builder()
+                .firstName("John")
+                .lastName("Doe")
+                .email("johndoe@gmail.com")
+                .build();
+    BDDMockito.given(employeeService.getEmployeeById(empId)).willReturn(Optional.of(employee));
+    //when
+        ResultActions response = mockMvc.perform(MockMvcRequestBuilders.get("/api/employees/{id}",empId));
+    //then
+        response.andExpect(MockMvcResultMatchers.status().isOk())
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.firstName",CoreMatchers.is(employee.getFirstName())))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.lastName",CoreMatchers.is(employee.getLastName())))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.email",CoreMatchers.is(employee.getEmail())));
+      }
+    // JUnit test for EmployeeController find by id REST API negative
+    @Test
+    public void givenEmployee_WhenCallById_thenReturnWitEmpty() throws Exception {
+        //given
+        long empId = 1L;
+        Employee employee = Employee.builder()
+                .firstName("John")
+                .lastName("Doe")
+                .email("johndoe@gmail.com")
+                .build();
+        BDDMockito.given(employeeService.getEmployeeById(empId)).willReturn(Optional.empty());
+        //when
+        ResultActions response = mockMvc.perform(MockMvcRequestBuilders.get("/api/employees/{id}",empId));
+        //then
+        response.andExpect(MockMvcResultMatchers.status().isNotFound())
+                .andDo(MockMvcResultHandlers.print());
+    }
 
 
 }

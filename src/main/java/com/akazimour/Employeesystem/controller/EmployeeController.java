@@ -3,6 +3,7 @@ package com.akazimour.Employeesystem.controller;
 import com.akazimour.Employeesystem.model.Employee;
 import com.akazimour.Employeesystem.service.EmployeeServiceImpl;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,6 +26,11 @@ public class EmployeeController {
     @GetMapping
     public List<Employee> retrieveAllEmployees(){
        return employeeService.getAllEmployees();
+    }
+    @GetMapping("/{id}")
+    public ResponseEntity<Employee> getEmployeeById(@PathVariable long id){
+        return employeeService.getEmployeeById(id).map(ResponseEntity::ok)
+                .orElseGet(()->ResponseEntity.notFound().build());
     }
 
 }
