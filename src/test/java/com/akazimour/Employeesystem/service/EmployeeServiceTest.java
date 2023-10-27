@@ -140,6 +140,29 @@ given(employeeRepository.findAll()).willReturn(List.of(employee,employee1));
         Assertions.assertThat(updated.getId()).isEqualTo(2L);
       }
 
+    @DisplayName("JUnit test for updateEmployeeV2 service method")
+    @Test
+    public void givenEmployee_WhenUpdatedV2_thenReturnWithUpdatedEmployee(){
+        // given
+        Employee employee1 = Employee.builder()
+                .id(1L)
+                .firstName("Tim")
+                .lastName("Burton")
+                .email("tim@gmail.com")
+                .build();
+        given(employeeRepository.findById(employee1.getId())).willReturn(Optional.of(employee1));
+        given(employeeRepository.save(employee1)).willReturn(employee1);
+        employee1.setEmail("burton@gmail.com");
+        employee1.setFirstName("Tom");
+
+        // when
+        Employee updated = employeeServiceImpl.updateEmployeeV2(employee.getId(),employee1);
+        // then
+        Assertions.assertThat(updated.getEmail()).isEqualTo("burton@gmail.com");
+        Assertions.assertThat(updated.getFirstName()).isEqualTo("Tom");
+        Assertions.assertThat(updated.getId()).isEqualTo(1L);
+    }
+
     // JUnit test for delete byId service method
     @DisplayName("JUnit test for delete byId service method")
     @Test

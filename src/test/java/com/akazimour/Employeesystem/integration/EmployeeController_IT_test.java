@@ -160,6 +160,37 @@ employeeRepository.save(employee);
                 .andExpect(MockMvcResultMatchers.jsonPath("$.lastName",CoreMatchers.is(updatedEmployee.getLastName())))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.email",CoreMatchers.is(updatedEmployee.getEmail())));
     }
+    @Test
+    public void givenEmployee_WhenUpdatedV2_thenReturnWithUpdatedEmployee() throws Exception {
+        //given
+
+        Employee savedEmployee = Employee.builder()
+                .firstName("John")
+                .lastName("Doe")
+                .email("johndoe@gmail.com")
+                .build();
+
+        employeeRepository.save(savedEmployee);
+
+
+        Employee updatedEmployee = Employee.builder()
+                .firstName("Arnold")
+                .lastName("Schwarzenegger")
+                .email("arnold@gmail.com")
+                .build();
+
+
+        //when
+        ResultActions response = mockMvc.perform(MockMvcRequestBuilders.put("/api/employees/update/{id}", savedEmployee.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(updatedEmployee)));
+        //then
+        response.andExpect(MockMvcResultMatchers.status().isOk())
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.firstName",CoreMatchers.is(updatedEmployee.getFirstName())))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.lastName",CoreMatchers.is(updatedEmployee.getLastName())))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.email",CoreMatchers.is(updatedEmployee.getEmail())));
+    }
     // JUnit test for EmployeeController delete employee REST API
     @Test
     public void givenEmployee_WhenDeleted_thenBeingRemovedFromDb() throws Exception {

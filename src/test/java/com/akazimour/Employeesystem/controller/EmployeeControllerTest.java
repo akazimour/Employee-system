@@ -170,6 +170,8 @@ BDDMockito.given(employeeService.updateEmployee(ArgumentMatchers.any(Employee.cl
                 .lastName("Schwarzenegger")
                 .email("arnold@gmail.com")
                 .build();
+
+       // BDDMockito.given(employeeService.updateEmployee(ArgumentMatchers.any(Employee.class),ArgumentMatchers.any(Long.class))).willReturn(updatedEmployee)
         BDDMockito.given(employeeService.getEmployeeById(empId)).willReturn(Optional.empty());
         BDDMockito.given(employeeService.updateEmployee(ArgumentMatchers.any(Employee.class))).willAnswer((invocation)->invocation.getArgument(0));
         //when
@@ -179,6 +181,35 @@ BDDMockito.given(employeeService.updateEmployee(ArgumentMatchers.any(Employee.cl
         //then
         response.andExpect(MockMvcResultMatchers.status().isNotFound())
                 .andDo(MockMvcResultHandlers.print());
+    }
+    @Test
+    public void givenEmployee_WhenUpdatedV2_thenReturnWithUpdatedEmployee() throws Exception {
+        //given
+        long empId = 1L;
+        Employee savedEmployee = Employee.builder()
+                .firstName("John")
+                .lastName("Doe")
+                .email("johndoe@gmail.com")
+                .build();
+
+        Employee updatedEmployee = Employee.builder()
+                .id(1L)
+                .firstName("Arnold")
+                .lastName("Schwarzenegger")
+                .email("arnold@gmail.com")
+                .build();
+        BDDMockito.given(employeeService.getEmployeeById(empId)).willReturn(Optional.of(savedEmployee));
+        BDDMockito.given(employeeService.updateEmployeeV2(ArgumentMatchers.any(Long.class),ArgumentMatchers.any(Employee.class))).willAnswer((invocation)->invocation.getArgument(0));
+        //when
+        ResultActions response = mockMvc.perform(MockMvcRequestBuilders.put("/api/employees/{id}", empId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(updatedEmployee)));
+        //then
+        response.andExpect(MockMvcResultMatchers.status().isOk())
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.firstName",CoreMatchers.is(updatedEmployee.getFirstName())))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.lastName",CoreMatchers.is(updatedEmployee.getLastName())))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.email",CoreMatchers.is(updatedEmployee.getEmail())));
     }
 
     // JUnit test for EmployeeController delete employee REST API
